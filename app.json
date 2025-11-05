@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "expo-nativewind-appwrite",
-    "slug": "expo-nativewind-appwrite",
+    "name": "habit-app",
+    "slug": "habit-app",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "exponativewindappwrite",
+    "scheme": "habitapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
@@ -34,7 +34,9 @@
           "backgroundColor": "#ffffff"
         }
       ],
-      "expo-font"
+      "expo-font",
+      "expo-web-browser",
+      "expo-secure-store"
     ],
     "experiments": {
       "typedRoutes": true
