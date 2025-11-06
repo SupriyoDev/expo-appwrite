@@ -12,39 +12,61 @@ const account = new Account(client);
 
 //all authentication functionality
 
-export default function Authentication() {
-  async function login(
-    email: string,
-    password: string,
-    setUserAndLoggedIn: NonNullable<AuthStoreType["setUserAndLoggedIn"]>
-  ) {
-    try {
-      await account.createEmailPasswordSession({ email, password });
-      const user = await account.get();
-      setUserAndLoggedIn(user);
-      return null;
-      //
-    } catch (error) {
-      if (error instanceof Error) return error.message;
-      return "An error occurred during login!";
-    }
+export async function login(
+  email: string,
+  password: string,
+  setUserAndLoggedIn: NonNullable<AuthStoreType["setUserAndLoggedIn"]>
+) {
+  try {
+    await account.createEmailPasswordSession({ email, password });
+    const user = await account.get();
+    setUserAndLoggedIn(user);
+    return null;
+    //
+  } catch (error) {
+    if (error instanceof Error) return error.message;
+    return "An error occurred during login!";
   }
+}
 
-  async function register(
-    name: string,
-    email: string,
-    password: string,
-    setUserAndLoggedIn: NonNullable<AuthStoreType["setUserAndLoggedIn"]>
-  ) {
-    try {
-      await account.create({ email, password, name, userId: ID.unique() });
-      await login(email, password, setUserAndLoggedIn);
-      return null;
-      //
-    } catch (error) {
-      if (error instanceof Error) return error.message;
-      return "An error occurred during Signup!";
-    }
+export async function register(
+  name: string,
+  email: string,
+  password: string,
+  setUserAndLoggedIn: NonNullable<AuthStoreType["setUserAndLoggedIn"]>
+) {
+  try {
+    await account.create({ email, password, name, userId: ID.unique() });
+    await login(email, password, setUserAndLoggedIn);
+    return null;
+    //
+  } catch (error) {
+    if (error instanceof Error) return error.message;
+    return "An error occurred during Signup!";
+  }
+}
+
+export async function logoutCurrentDevice(logout: AuthStoreType["logout"]) {
+  try {
+    await account.deleteSession({ sessionId: "current" });
+    logout();
+    return null;
+    //
+  } catch (error) {
+    if (error instanceof Error) return error.message;
+    return "An error occurred during Logout!";
+  }
+}
+
+export async function LogoutAllDevice(logout: AuthStoreType["logout"]) {
+  try {
+    await account.deleteSessions();
+    logout();
+
+    return null;
+  } catch (error) {
+    if (error instanceof Error) return error.message;
+    return "Something went wrong!";
   }
 }
 

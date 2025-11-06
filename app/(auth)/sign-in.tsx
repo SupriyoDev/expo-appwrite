@@ -1,4 +1,5 @@
 import GoogleIcon from "@/assets/icons/google.png";
+import { login, useAuthStore } from "@/lib/appwrite";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
@@ -12,15 +13,38 @@ import {
   ScrollView,
   Text,
   TextInput,
+  ToastAndroid,
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const SignIn = () => {
   const [isHiden, setHiden] = useState(true);
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isLoading, setLoading] = useState(false);
+
+  const setUserAndLoggedIn = useAuthStore((state) => state.setUserAndLoggedIn);
+
+  const handleSignin = async () => {
+    setLoading(true);
+    try {
+      if (!email || !password) {
+        ToastAndroid.show("Please input required details", ToastAndroid.SHORT);
+        return;
+      }
+
+      const error = await login(email, password, setUserAndLoggedIn);
+
+      if (error) {
+        ToastAndroid.show(error, ToastAndroid.SHORT);
+        return;
+      }
+    } catch (error) {
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <SafeAreaView className="flex-1 w-full h-full p-8">
@@ -89,7 +113,10 @@ const SignIn = () => {
               </Text>
             </Link>
 
-            <Pressable className=" overflow-hidden rounded-lg">
+            <Pressable
+              className=" overflow-hidden rounded-lg"
+              onPress={handleSignin}
+            >
               <LinearGradient
                 colors={["#FFA450", "#FF5C00"]}
                 className="w-full"
@@ -97,7 +124,15 @@ const SignIn = () => {
                 end={{ x: 1, y: 1 }}
               >
                 <Text className="text-xl text-white font-semibold text-center p-3">
-                  Log In
+                  {isLoading ? (
+                    <Ionicons
+                      name="ellipse-outline"
+                      size={26}
+                      color={"white"}
+                    />
+                  ) : (
+                    "Log In"
+                  )}
                 </Text>
               </LinearGradient>
             </Pressable>
@@ -106,7 +141,7 @@ const SignIn = () => {
               <Text className="text-lg font-medium text-gray-700 text-center">
                 Or Log in with:
               </Text>
-              <Pressable className="bg-white rounded-lg p-3 flex flex-row items-center justify-center gap-3">
+              <Pressable className="bg-white rounded-lg p-4 flex flex-row items-center justify-center gap-3">
                 <Image
                   source={GoogleIcon}
                   alt=""

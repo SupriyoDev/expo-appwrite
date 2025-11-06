@@ -1,4 +1,5 @@
 import "@/app/global.css";
+import { useAuthStore } from "@/lib/appwrite";
 
 import {
   DefaultTheme,
@@ -42,7 +43,7 @@ export default function RootLayout() {
 }
 
 function SubRootLayout() {
-  const isAuthenticated = false;
+  const isAuthenticated = useAuthStore((state) => state.isLoggedIn);
   return (
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Protected guard={isAuthenticated}>
